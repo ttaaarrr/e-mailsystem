@@ -1,7 +1,9 @@
 // routes/Register.js
 const express = require("express");
 const bcrypt = require("bcrypt");
-const db = require("../services/db"); // ใช้ db ที่เชื่อมกับ MySQL
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+const db = require("../services/db");
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
@@ -34,20 +36,47 @@ if (!email.endsWith("@bpit.co.th")) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const fullName = `${firstName} ${lastName}`;
+ const token = crypto.randomBytes(32).toString("hex");
 
     await db.query(
-      "INSERT INTO users (email, password, full_name, nickname, department, branch) VALUES (?, ?, ?, ?, ?, ?)",
-      [email, hashedPassword, fullName, nickname, department, branch]
+      `INSERT INTO users (email, password, full_name, nickname, department, branch, verification_token) 
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [email, hashedPassword, fullName, nickname, department, branch, token]
     );
 
-    // ตอบ JSON แทน redirect
-    // res.json({ success: true, redirectUrl: '/auth/google' });
-    res.json({ success: true, redirectUrl: '/pages/login.html' });
+    const verifyLink = `http://localhost:5000/api/verify?token=${token}`;
+    const emailHtml = `
+      <h3>สวัสดีคุณ ${fullName}</h3>
+      <p>กรุณาคลิกลิงก์ด้านล่างเพื่อยืนยันอีเมล:</p>
+      <a href="${verifyLink}">${verifyLink}</a>
+      <p>หากคุณไม่ได้สมัครสมาชิก กรุณาไม่ต้องสนใจอีเมลฉบับนี้</p>
+    `;
+
+    await sendVerificationEmail(email, "ยืนยันอีเมล - ระบบ BPIT", emailHtml);
+
+    res.json({ success: true, message: "สมัครสำเร็จ กรุณาตรวจสอบอีเมลเพื่อยืนยันตัวตน" });
   } catch (err) {
     console.error("❌ Error inserting user:", err);
     res.status(500).json({ message: "เกิดข้อผิดพลาด", error: err.message });
   }
 });
 
+// ✅ ฟังก์ชันส่งอีเมลยืนยัน
+async function sendVerificationEmail(to, subject, html) {
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  await transporter.sendMail({
+    from: '"BPIT System" <no-reply@bpit.co.th>',
+    to,
+    subject,
+    html,
+  });
+}
 
 module.exports = router;

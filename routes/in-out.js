@@ -31,16 +31,25 @@ router.post("/login", async (req, res) => {
 
     const user = results[0];
 
+    // ✅ เพิ่มการเช็คว่า user ยืนยันอีเมลแล้วหรือยัง
+    if (!user.is_verified) {
+  return res.status(403).json({ 
+    message: "ยังไม่ได้ยืนยันตัว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ", 
+    verified: false 
+  });
+}
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "E-mail หรือ รหัสผ่านไม่ถูกต้อง" });
     }
 
-    req.session.user = {
+     req.session.user = {
       id: user.id,
       email: user.email,
       fullname: user.fullname,
-       department: user.department,
+      department: user.department,
+      is_verified: user.is_verified // แนะนำเก็บไว้ใน session ด้วย
     };
 
     return res.status(200).json({ message: "เข้าสู่ระบบสำเร็จ", user: req.session.user });

@@ -694,6 +694,15 @@
                     <label for="selectAllCustomers" class="text-gray-800 dark:text-gray-200 cursor-pointer flex-1 font-semibold">เลือกทั้งหมด</label>
                   </li>
                 </ul>
+                <!-- ช่องค้นหาชื่อลูกค้า -->
+                  <div class="px-2 pb-2">
+                    <input
+                      type="text"
+                      id="searchCustomer"
+                      placeholder=" ค้นหาชื่อลูกค้า"
+                      class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                    />
+                  </div>
                 <ul id="customerCheckboxList" class="p-2 space-y-1"></ul>
              </div>
             </div>
@@ -1198,6 +1207,15 @@ function renderFileList(files) {
     dropZone.addEventListener("dragleave", () => {
       dropZone.classList.remove("border-blue-400", "bg-blue-50", "dark:bg-gray-600");
     });
+document.getElementById("searchCustomer").addEventListener("input", function () {
+  const filter = this.value.toLowerCase();
+  const customers = document.querySelectorAll("#customerCheckboxList li");
+
+  customers.forEach((li) => {
+    const label = li.textContent.toLowerCase();
+    li.style.display = label.includes(filter) ? "" : "none";
+  });
+});
 
     // ฟอร์มส่งอีเมล
 document.getElementById("emailForm").addEventListener("submit", async (event) => {
