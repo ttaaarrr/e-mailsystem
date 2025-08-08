@@ -128,6 +128,85 @@ router.get('/my/count', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 });
+
+// ดึงรายการลูกค้าของ user ที่ login อยู่
+router.get('/my', authMiddleware, async (req, res) => {
+  try {
+    const userEmail = req.query.email;
+    
+    if (!userEmail) {
+      return res.status(400).json({ message: "กรุณาระบุ email ของ user" });
+    }
+
+    const [customers] = await db.query(
+      `SELECT c.id, c.company_name, c.email, c.province, c.district, c.created_at
+       FROM customers c
+       WHERE c.owner_name = ?`,
+      [userEmail]
+    );
+
+    res.json(customers);
+  } catch (err) {
+    console.error("❌ Error fetching user customers:", err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด", error: err.message });
+  }
+});
+
+// แก้ไขข้อมูลลูกค้า
+router.put('/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { company_name, province, district } = req.body;
+    const userEmail = req.session?.user?.email;
+
+    // ตรวจสอบว่าเป็นลูกค้าของ user นี้หรือไม่
+    const [existingCustomer] = await db.query(
+      'SELECT id FROM customers WHERE id = ? AND owner_name = ?',
+      [id, userEmail]
+    );
+
+    if (existingCustomer.length === 0) {
+      return res.status(404).json({ message: "ไม่พบลูกค้าหรือไม่มีสิทธิ์แก้ไข" });
+    }
+
+    // อัปเดตข้อมูล
+    await db.query(
+      'UPDATE customers SET company_name = ?, province = ?, district = ? WHERE id = ?',
+      [company_name, province, district, id]
+    );
+
+    res.json({ success: true, message: "แก้ไขข้อมูลสำเร็จ" });
+  } catch (err) {
+    console.error("❌ Error updating customer:", err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด", error: err.message });
+  }
+});
+
+// ลบลูกค้า
+router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userEmail = req.session?.user?.email;
+
+    // ตรวจสอบว่าเป็นลูกค้าของ user นี้หรือไม่
+    const [existingCustomer] = await db.query(
+      'SELECT id FROM customers WHERE id = ? AND owner_name = ?',
+      [id, userEmail]
+    );
+
+    if (existingCustomer.length === 0) {
+      return res.status(404).json({ message: "ไม่พบลูกค้าหรือไม่มีสิทธิ์ลบ" });
+    }
+
+    // ลบลูกค้า
+    await db.query('DELETE FROM customers WHERE id = ?', [id]);
+
+    res.json({ success: true, message: "ลบลูกค้าสำเร็จ" });
+  } catch (err) {
+    console.error("❌ Error deleting customer:", err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด", error: err.message });
+  }
+});
 router.get('/count', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT COUNT(*) AS count FROM customers');
@@ -137,14 +216,5 @@ router.get('/count', async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 });
-// router.delete('/api/customers/:id', async (req, res) => {
-//   const id = req.params.id;
-//   try {
-//     await db.query('DELETE FROM customers WHERE id = ?', [id]);
-//     res.status(200).json({ success: true });
-//   } catch (err) {
-//     console.error("❌ Error deleting customer:", err);
-//     res.status(500).json({ error: "Failed to delete customer" });
-//   }
-// }); 
+
 module.exports = router;

@@ -29,13 +29,14 @@ const forgotpass = require("./routes/forgotpass");
 const connect = require("./api/pop-imap-connect-email");
 const signatureRoutes = require('./routes/signature');
 const emailAttachmentsRoute = require('./routes/email-attachments');
+const uploadExcelRouter = require('./routes/importExcel');
 
 const app = express();
 const port = 5000;
 
 // Middleware
 app.use(cors({
-  origin: ["http://localhost:3000", "https://test99.bpit-staff.com"],
+  origin: ["http://localhost:3000", "https://e-mail.bpit-staff.com"],
   credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));
@@ -109,6 +110,10 @@ app.use("/", forgotpass);
 app.use("/", connect);
 app.use('/api/signature', signatureRoutes);
 app.use('/api/email-attachments', emailAttachmentsRoute);
+app.use("/api", require("./routes/Register"));
+app.use("/api", require("./routes/Verify"));
+app.use('/api/customers', uploadExcelRouter);
+
 // Error handling
 app.use((err, req, res, next) => {
   console.error(err.message);

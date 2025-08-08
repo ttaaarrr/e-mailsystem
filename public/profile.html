@@ -617,171 +617,245 @@
           </div>
         </header>
        <main>
-<div class="max-w-lg mx-auto my-10 bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden p-8">
-  <!-- Profile Information -->
-  <h2 id="profileName" class="text-3xl font-semibold text-gray-800 dark:text-white mb-1"></h2>
-  <p id="profileDepartment" class="text-sm text-gray-600 dark:text-gray-400 mb-1"></p>
-  <p id="profileEmail" class="text-sm text-gray-600 dark:text-gray-400 mb-6"></p>
+    <div class="max-w-lg mx-auto my-10 bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden p-8">
+      <!-- Profile Information -->
+      <h2 id="profileName" class="text-3xl font-semibold text-gray-800 dark:text-white mb-1"></h2>
+      <p id="profileDepartment" class="text-sm text-gray-600 dark:text-gray-400 mb-1"></p>
+      <p id="profileEmail" class="text-sm text-gray-600 dark:text-gray-400 mb-6"></p>
 
-    <!-- Button to open Modal -->
-  <button
-    onclick="document.getElementById('connectModal').classList.remove('hidden')"
-    class="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 rounded text-white font-semibold transition"
+      <!-- Button to open Modal -->
+      <button
+        onclick="openConnectModal()"
+        class="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 rounded text-white font-semibold transition mb-4"
+      >
+        เชื่อมต่อ POP/IMAP
+      </button>
+      <!-- Button to edit customer -->
+      <button
+         onclick="openEditCustomerModal()"
+          class="w-full px-4 py-3 bg-yellow-500 hover:bg-yellow-600 rounded text-white font-semibold transition"
+      >
+        ✏️ แก้ไขข้อมูลลูกค้า
+      </button>
+
+      <!-- Dashboard Summary -->
+      <div class="mt-10 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">📊 My Email Summary</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-white dark:bg-gray-700 p-4 rounded shadow text-center">
+            <p class="text-sm text-gray-600 dark:text-gray-300">📤 Sent</p>
+            <p id="my-email-sent" class="text-2xl font-bold text-green-600 dark:text-green-300">0</p>
+          </div>
+          <div class="bg-white dark:bg-gray-700 p-4 rounded shadow text-center">
+            <p class="text-sm text-gray-600 dark:text-gray-300">👥 customer</p>
+            <p id="my-customer-count" class="text-2xl font-bold text-green-600 dark:text-green-300">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connect Modal -->
+    <div id="connectModal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center hidden z-50">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-8 relative">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Connect BPIT E-mail</h2>
+        <form id="connectForm" class="space-y-5 text-gray-700 dark:text-gray-300">
+          <input type="hidden" name="protocol" value="imap" />
+          <div class="hidden">
+            <label class="block mb-2 font-medium" for="username">Email</label>
+            <input
+              type="email"
+              id="username"
+              name="username"
+              placeholder="user@bpit.co.th"
+              required
+              class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+            />
+          </div>
+          <div class="relative">
+            <label class="block mb-2 font-medium" for="password">Password</label>
+            <div class="relative">
+              <input
+                type="password"
+                id="password"
+                placeholder="กรอกรหัสผ่านเขาเมลBPIT"
+                name="password"
+                required
+                class="w-full p-3 pr-12 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <button
+                type="button"
+                onclick="togglePassword()"
+                class="absolute right-3 top-0 bottom-0 my-auto h-5 w-5 text-gray-600"
+                aria-label="Toggle password visibility"
+              >
+                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-full w-full" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="hidden">
+            <label class="block mb-2 font-medium" for="host">IMAP Server</label>
+            <input
+              type="text"
+              id="host"
+              name="host"
+              value="cloudvpsnew.bpit.co.th"
+              required
+              class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+            />
+          </div>
+          <div class="hidden">
+            <label class="block mb-2 font-medium" for="port">Port</label>
+            <input
+              type="number"
+              id="port"
+              name="port"
+              value="993"
+              required
+              class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+            />
+          </div>
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              onclick="closeConnectModal()"
+              class="px-5 py-3 bg-red-300 hover:bg-gray-400 rounded font-semibold transition"
+            >
+              ยกเลิก
+            </button>
+            <button
+  type="submit"
+  id="connectSubmitBtn"
+  class="px-5 py-3 bg-green-600 hover:bg-green-700 rounded text-white font-semibold transition flex items-center justify-center"
+>
+  <span id="connectBtnText">เชื่อมต่อ</span>
+  <svg
+    id="connectLoadingIcon"
+    class="hidden animate-spin ml-2 h-5 w-5 text-white"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
   >
-    เชื่อมต่อ POP/IMAP
-  </button>
+    <circle
+      class="opacity-25"
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      stroke-width="4"
+    ></circle>
+    <path
+      class="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+    ></path>
+  </svg>
+</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-  <!-- Modal -->
-  <div id="connectModal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center hidden z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-8 relative">
-      <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Connect BPIT E-mail</h2>
-
-      <form id="connectForm" class="space-y-5 text-gray-700 dark:text-gray-300">
-        <input type="hidden" name="protocol" value="imap" />
-
-        <div  class="hidden">
-          <label class="block mb-2 font-medium" for="username">Email</label>
-          <input
-            type="email"
-            id="username"
-            name="username"
-            placeholder="user@bpit.co.th"
-            required
-            class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-          />
-        </div>
-
-<div class="relative">
-  <label class="block mb-2 font-medium" for="password">Password</label>
-  <div class="relative">
-    <input
-      type="password"
-      id="password"
-      placeholder=" กรอกรหัสผ่านเขาเมลBPIT "
-      name="password"
-      required
-      class="w-full p-3 pr-12 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-    />
+<!-- Edit Customer Modal -->
+<div id="editCustomerModal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center hidden z-50">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl p-8 relative max-h-[80vh] overflow-y-auto">
+   
     <button
-      type="button"
-      onclick="togglePassword()"
-      class="absolute right-3 top-0 bottom-0 my-auto h-5 w-5 text-gray-600"
-      aria-label="Toggle password visibility"
-    >
-      <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-full w-full" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-      </svg>
-    </button>
-  </div>
-</div>
+  onclick="closeEditModal()"
+  class="absolute top-4 right-4 text-gray-400 hover:text-red-600 dark:hover:text-red-400 text-5xl font-bold leading-none transition-transform transform hover:scale-110"
+  aria-label="Close modal"
+  title="ปิด"
+  type="button"
+>
+  &times;
+</button>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">แก้ไขข้อมูลลูกค้า</h2>
+    <input
+  type="text"
+  id="customerSearchInput"
+  placeholder="ค้นหาชื่อบริษัท หรือ อีเมล..."
+  class="w-full p-3 mb-4 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+  oninput="filterCustomers()"
+/>
+    <div id="customer-list" class="mb-6 space-y-2 text-gray-700 dark:text-gray-300"></div>
+    <div id="customer-pagination" class="flex justify-center items-center mt-6 space-x-1"></div>
 
-        <div class="hidden">
-          <label class="block mb-2 font-medium" for="host">IMAP Server</label>
-          <input
-            type="text"
-            id="host"
-            name="host"
-            value="cloudvpsnew.bpit.co.th"
-            required
-            class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-          />
+    <!-- เพิ่ม div ครอบฟอร์มแก้ไข และซ่อนตอนแรก -->
+    <div id="editCustomerFormContainer" class="hidden mt-6">
+      <form id="editCustomerForm" class="space-y-5 text-gray-700 dark:text-gray-300">
+        <div>
+          <label class="block mb-2 font-medium">ชื่อบริษัท</label>
+          <input type="text" id="companyName" name="companyName"
+            class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600" required />
         </div>
-
-        <div class="hidden">
-          <label class="block mb-2 font-medium" for="port">Port</label>
-          <input
-            type="number"
-            id="port"
-            name="port"
-            value="993"
-            required
-            class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-          />
-        </div class="hidden">
-
-        <div class="flex items-center mb-6 hidden">
-          <input
-            type="checkbox"
-            id="tls"
-            name="tls"
-            checked
-            class="mr-2 w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-          />
-          <label for="tls" class="select-none font-medium hidden">ใช้ TLS (SSL/TLS)</label>
+        <div>
+          <label class="block mb-2 font-medium">อีเมลลูกค้า</label>
+          <input type="email" id="customerEmail" name="customerEmail"
+            class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600" required />
         </div>
-
+        <div>
+          <label class="block mb-2 font-medium">จังหวัด</label>
+          <input type="text" id="province" name="province"
+            class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600" required />
+        </div>
+        <div>
+          <label class="block mb-2 font-medium">เขต/อำเภอ</label>
+          <input type="text" id="district" name="district"
+            class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600" required />
+        </div>
         <div class="flex justify-end space-x-3">
           <button
             type="button"
-            onclick="document.getElementById('connectModal').classList.add('hidden')"
-            class="px-5 py-3 bg-red-300 hover:bg-gray-400 rounded font-semibold transition"
+            onclick="closeEditForm()"
+            class="px-4 py-2 bg-red-300 hover:bg-gray-400 rounded font-semibold"
           >
-            ยกเลิก
+            ปิด
           </button>
           <button
             type="submit"
-            class="px-5 py-3 bg-green-600 hover:bg-green-700 rounded text-white font-semibold transition"
+            class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold"
           >
-            เชื่อมต่อ
+            บันทึก
           </button>
         </div>
       </form>
     </div>
   </div>
-  <!-- Dashboard Summary -->
-<div class="mt-10 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
-  <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">📊 My Email Summary</h3>
-  
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <!-- <div class="bg-white dark:bg-gray-700 p-4 rounded shadow text-center">
-      <p class="text-sm text-gray-600 dark:text-gray-300">📥 Received</p>
-      <p id="my-email-received" class="text-2xl font-bold text-blue-600 dark:text-blue-300">0</p>
-    </div> -->
-
-    <div class="bg-white dark:bg-gray-700 p-4 rounded shadow text-center">
-      <p class="text-sm text-gray-600 dark:text-gray-300">📤 Sent</p>
-      <p id="my-email-sent" class="text-2xl font-bold text-green-600 dark:text-green-300">0</p>
-    </div>
-
-    <div class="bg-white dark:bg-gray-700 p-4 rounded shadow text-center">
-      <p class="text-sm text-gray-600 dark:text-gray-300">👥 customer</p>
-      <p id="my-customer-count" class="text-2xl font-bold text-green-600 dark:text-green-300">0</p>
-    </div>
-  </div>
 </div>
-</div>
-  <script>
-  // สลับแสดง/ซ่อนรหัสผ่าน
-  function togglePassword() {
-    const input = document.getElementById("password");
-    const icon = document.getElementById("eyeIcon");
-    const isPassword = input.type === "password";
-    input.type = isPassword ? "text" : "password";
 
-    icon.innerHTML = isPassword
-      ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 012.293-3.95M15 12a3 3 0 11-6 0 3 3 0 016 0zM3 3l18 18" />`
-      : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+  </main>
+<script>
+  // ตัวแปรเก็บข้อมูลลูกค้าและสถานะหน้า
+  let customers = [];
+  let currentPage = 1;
+  const customersPerPage = 7;
+
+  // ฟังก์ชัน escape string ง่ายๆ ป้องกัน XSS เบื้องต้น
+  function escapeHTML(str) {
+    if (!str) return "";
+    return str.replace(/[&<>"']/g, (match) => {
+      const escapeMap = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      };
+      return escapeMap[match];
+    });
   }
 
-  // ดึงข้อมูลโปรไฟล์ผู้ใช้จาก backend
+  // โหลดข้อมูลโปรไฟล์และแสดงผลProfile
   async function fetchProfile() {
     try {
-      const response = await fetch("http://localhost:5000/api/profile", {
-        credentials: "include",
-      });
-
-      if (!response.ok) throw new Error("ไม่สามารถโหลดข้อมูลโปรไฟล์ได้");
-
-      const data = await response.json();
-      console.log("📄 ข้อมูลโปรไฟล์ที่ได้รับจาก API:", data);
+      const res = await fetch("http://localhost:5000/api/profile", { credentials: "include" });
+      if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลโปรไฟล์ได้");
+      const data = await res.json();
 
       if (!data || !data.email) throw new Error("ยังไม่ได้เข้าสู่ระบบ");
 
@@ -789,28 +863,304 @@
       document.getElementById("profileDepartment").textContent = `ฝ่าย: ${data.department || "ไม่มีข้อมูล"}`;
       document.getElementById("profileEmail").textContent = `อีเมล: ${data.email || "ไม่มีข้อมูล"}`;
 
-//เพื่อใส่อีเมลที่ล็อกอินใน input
-       const emailInput = document.getElementById("username");
-        emailInput.value = data.email;
-        emailInput.readOnly = true;
-      console.log("📧 ส่ง email ไปโหลด summary:", data.email);
-await loadMyEmailSummary(data.email);
+      const emailInput = document.getElementById("username");
+      emailInput.value = data.email;
+      emailInput.readOnly = true;
 
-    } catch (error) {
-      console.error("❌ เกิดข้อผิดพลาด:", error);
+      await loadMyEmailSummary(data.email);
+    } catch (err) {
+      console.error(err);
       document.getElementById("profileName").textContent = "ยังไม่ได้เข้าสู่ระบบ";
       document.getElementById("profileDepartment").textContent = "";
       document.getElementById("profileEmail").textContent = "";
     }
-    
+  }
+  //function filterCustomers 
+function filterCustomers() {
+  const query = document.getElementById("customerSearchInput").value.toLowerCase().trim();
+
+  // กรอง customers ตาม company_name หรือ email ที่ตรงกับคำค้นหา
+  const filtered = customers.filter(c => {
+    return (
+      (c.company_name && c.company_name.toLowerCase().includes(query)) ||
+      (c.email && c.email.toLowerCase().includes(query))
+    );
+  });
+
+  // แสดงผลลูกค้าใหม่จาก filtered list
+  renderCustomerListFiltered(filtered);
+}
+
+function renderCustomerListFiltered(filteredCustomers) {
+  const container = document.getElementById("customer-list");
+  container.innerHTML = "";
+
+  if (filteredCustomers.length === 0) {
+    container.innerHTML = `<div class="p-4 text-center text-gray-500">ไม่พบลูกค้าตามคำค้นหา</div>`;
+    document.getElementById("customer-pagination").innerHTML = "";
+    return;
   }
 
-  // ดึงข้อมูลโปรไฟล์เมื่อโหลดหน้า
-  fetchProfile();
+  // ไม่ต้อง paginate ตอนค้นหา (ถ้าต้องการ paginate ก็ทำเพิ่มได้)
+  const html = filteredCustomers.map(c => `
+    <div class="flex justify-between items-center border p-3 rounded bg-gray-100 dark:bg-gray-700 mb-2">
+      <div>
+        <p><strong>บริษัท:</strong> ${escapeHTML(c.company_name)}</p>
+        <p><strong>อีเมล:</strong> ${escapeHTML(c.email)}</p>
+        <p><strong>จังหวัด:</strong> ${escapeHTML(c.province)}</p>
+      </div>
+      <div class="space-x-2">
+        <button data-id="${c.id}" class="btn-edit px-3 py-1 bg-yellow-400 text-white rounded">แก้ไข</button>
+        <button data-id="${c.id}" class="btn-delete px-3 py-1 bg-red-500 text-white rounded">ลบ</button>
+      </div>
+    </div>
+  `).join("");
 
+  container.innerHTML = html;
+  document.getElementById("customer-pagination").innerHTML = "";
+}
+
+  // โหลดสรุปจำนวนอีเมลและลูกค้า
+  async function loadMyEmailSummary(email) {
+    try {
+      const [sentRes, customerRes] = await Promise.all([
+        fetch(`http://localhost:5000/api/send-email/sent/count?email=${encodeURIComponent(email)}`, { credentials: "include" }),
+        fetch(`http://localhost:5000/api/customers/my/count?email=${encodeURIComponent(email)}`, { credentials: "include" }),
+      ]);
+      const sentData = await sentRes.json();
+      const customerData = await customerRes.json();
+      document.getElementById("my-email-sent").textContent = sentData.count || 0;
+      document.getElementById("my-customer-count").textContent = customerData.count || 0;
+    } catch (error) {
+      console.error("โหลดข้อมูลเมลล้มเหลว:", error);
+    }
+  }
+
+  // โหลดข้อมูลลูกค้าทั้งหมด
+  async function loadCustomers() {
+    try {
+      const profileRes = await fetch("http://localhost:5000/api/profile", { credentials: "include" });
+      const profileData = await profileRes.json();
+      const userEmail = profileData.email;
+
+      const res = await fetch(`/api/customers/my?email=${encodeURIComponent(userEmail)}`, { credentials: "include" });
+      customers = await res.json();
+
+      currentPage = 1; // รีเซ็ตหน้าเวลาโหลดใหม่
+      renderCustomerList();
+    } catch (error) {
+      console.error("Error loading customers:", error);
+      const container = document.getElementById("customer-list");
+      container.innerHTML = `<div class="p-4 text-center text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
+      document.getElementById("customer-pagination").innerHTML = "";
+    }
+  }
+
+  // แสดงรายการลูกค้าพร้อมแบ่งหน้า
+  function renderCustomerList() {
+    const container = document.getElementById("customer-list");
+    container.innerHTML = "";
+
+    if (customers.length === 0) {
+      container.innerHTML = `<div class="p-4 text-center text-gray-500">ยังไม่มีลูกค้า</div>`;
+      document.getElementById("customer-pagination").innerHTML = "";
+      return;
+    }
+
+    const start = (currentPage - 1) * customersPerPage;
+    const end = start + customersPerPage;
+    const paginated = customers.slice(start, end);
+
+    // สร้าง HTML รายการลูกค้า
+    const html = paginated.map(c => `
+      <div class="flex justify-between items-center border p-3 rounded bg-gray-100 dark:bg-gray-700 mb-2">
+        <div>
+          <p><strong>บริษัท:</strong> ${escapeHTML(c.company_name)}</p>
+          <p><strong>อีเมล:</strong> ${escapeHTML(c.email)}</p>
+          <p><strong>จังหวัด:</strong> ${escapeHTML(c.province)}</p>
+        </div>
+        <div class="space-x-2">
+          <button data-id="${c.id}" class="btn-edit px-3 py-1 bg-yellow-400 text-white rounded">แก้ไข</button>
+          <button data-id="${c.id}" class="btn-delete px-3 py-1 bg-red-500 text-white rounded">ลบ</button>
+        </div>
+      </div>
+    `).join("");
+
+    container.innerHTML = html;
+    renderPagination(customers.length, customersPerPage, currentPage);
+    scrollToTop();
+  }
+
+  // สร้าง pagination UI
+  function renderPagination(totalItems, perPage, current) {
+    const pagination = document.getElementById("customer-pagination");
+    pagination.innerHTML = "";
+
+    const totalPages = Math.ceil(totalItems / perPage);
+    if (totalPages <= 1) return;
+
+    function createBtn(page, label = null, active = false) {
+      const btn = document.createElement("button");
+      btn.textContent = label || page;
+      btn.className = `px-3 py-1 rounded mx-1 ${active ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer"}`;
+      btn.disabled = active;
+
+      btn.addEventListener("click", () => {
+        currentPage = page;
+        renderCustomerList();
+      });
+      return btn;
+    }
+
+    // Previous
+    if (current > 1) pagination.appendChild(createBtn(current - 1, "«"));
+
+    // First page
+    pagination.appendChild(createBtn(1, "1", current === 1));
+
+    const maxVisible = 2;
+    const startPage = Math.max(2, current - maxVisible);
+    const endPage = Math.min(totalPages - 1, current + maxVisible);
+
+    if (startPage > 2) {
+      const dots = document.createElement("span");
+      dots.textContent = "...";
+      dots.className = "mx-1 text-gray-500";
+      pagination.appendChild(dots);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pagination.appendChild(createBtn(i, null, i === current));
+    }
+
+    if (endPage < totalPages - 1) {
+      const dots = document.createElement("span");
+      dots.textContent = "...";
+      dots.className = "mx-1 text-gray-500";
+      pagination.appendChild(dots);
+    }
+
+    if (totalPages > 1) {
+      pagination.appendChild(createBtn(totalPages, totalPages.toString(), current === totalPages));
+    }
+
+    // Next
+    if (current < totalPages) pagination.appendChild(createBtn(current + 1, "»"));
+  }
+
+  // ฟังก์ชันช่วยเลื่อนหน้าไปบนสุด
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // เปิดฟอร์มแก้ไขข้อมูลลูกค้า พร้อมเติมข้อมูล
+  function openEditForm(customer) {
+    document.getElementById("companyName").value = customer.company_name || "";
+    document.getElementById("customerEmail").value = customer.email || "";
+    document.getElementById("province").value = customer.province || "";
+    document.getElementById("district").value = customer.district || "";
+
+    const form = document.getElementById("editCustomerForm");
+    form.setAttribute("data-customer-id", customer.id);
+
+    document.getElementById("editCustomerFormContainer").classList.remove("hidden");
+    document.getElementById("customer-list").classList.add("hidden");
+    document.getElementById("customer-pagination").classList.add("hidden");
+  }
+
+  // ปิดฟอร์มแก้ไขและล้างข้อมูล
+  function closeEditForm() {
+    const form = document.getElementById("editCustomerForm");
+    form.reset();
+    form.removeAttribute("data-customer-id");
+    document.getElementById("editCustomerFormContainer").classList.add("hidden");
+    document.getElementById("customer-list").classList.remove("hidden");
+    document.getElementById("customer-pagination").classList.remove("hidden");
+  }
+
+  // event delegation จัดการปุ่มแก้ไขและลบในรายการลูกค้า
+  document.getElementById("customer-list").addEventListener("click", e => {
+    if (e.target.classList.contains("btn-edit")) {
+      const id = parseInt(e.target.dataset.id, 10);
+      const customer = customers.find(c => c.id === id);
+      if (customer) openEditForm(customer);
+    } else if (e.target.classList.contains("btn-delete")) {
+      const id = parseInt(e.target.dataset.id, 10);
+      deleteCustomer(id);
+    }
+  });
+
+  // ส่งข้อมูลแก้ไขลูกค้า
+  document.getElementById("editCustomerForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const form = e.target;
+    const customerId = form.getAttribute("data-customer-id");
+    if (!customerId) {
+      alert("กรุณาเลือกข้อมูลลูกค้าที่ต้องการแก้ไข");
+      return;
+    }
+
+    const data = {
+      company_name: form.companyName.value.trim(),
+      email: form.customerEmail.value.trim(),
+      province: form.province.value.trim(),
+      district: form.district.value.trim(),
+    };
+
+    try {
+      const res = await fetch(`/api/customers/${customerId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        alert("แก้ไขข้อมูลสำเร็จ");
+        closeEditForm();
+        loadCustomers();
+      } else {
+        alert("แก้ไขข้อมูลไม่สำเร็จ");
+      }
+    } catch {
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+    }
+  });
+
+  // ลบลูกค้า
+  async function deleteCustomer(id) {
+    if (!confirm("คุณแน่ใจหรือไม่ว่าจะลบข้อมูลลูกค้านี้?")) return;
+
+    try {
+      const res = await fetch(`/api/customers/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (res.ok) {
+        alert("ลบลูกค้าสำเร็จ");
+        loadCustomers();
+      } else {
+        alert("ลบลูกค้าไม่สำเร็จ");
+      }
+    } catch {
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+    }
+  }
+
+  // เรียกโหลดข้อมูลตอนหน้าโหลดเสร็จ
+  fetchProfile();
   // ผูก event ฟอร์ม submit สำหรับเชื่อมต่อ SMTP/IMAP
+  const submitBtn = document.getElementById('connectSubmitBtn');
+const loadingIcon = document.getElementById('connectLoadingIcon');
+const btnText = document.getElementById('connectBtnText');
   document.getElementById("connectForm").addEventListener("submit", async function (e) {
   e.preventDefault();
+
+  // disable ปุ่มและโชว์ spinner
+  submitBtn.disabled = true;
+  loadingIcon.classList.remove('hidden');
+  btnText.textContent = "กำลังเชื่อมต่อ...";
 
   const form = e.target;
   const username = form.username.value.trim();
@@ -833,7 +1183,7 @@ await loadMyEmailSummary(data.email);
     const res = await fetch('http://localhost:5000/connect-email', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",  // << เพิ่มตรงนี้
+      credentials: "include",  
       body: JSON.stringify(data),
     });
 
@@ -849,30 +1199,82 @@ await loadMyEmailSummary(data.email);
   } catch (err) {
     alert("ไม่สามารถเชื่อมต่อได้");
     console.error(err);
+  }finally {
+    // เปิดปุ่มและซ่อน spinner
+    submitBtn.disabled = false;
+    loadingIcon.classList.add('hidden');
+    btnText.textContent = "เชื่อมต่อ";
   }
 });
-// ฟังก์ชันโหลดจำนวนเมลของผู้ใช้ที่ล็อกอิน
-async function loadMyEmailSummary(email) {
-  try {
-    const [sentRes,customerRes] = await Promise.all([
-      fetch(`http://localhost:5000/api/send-email/sent/count?email=${encodeURIComponent(email)}`, { credentials: 'include' }),
-      
-      fetch(`http://localhost:5000/api/customers/my/count?email=${encodeURIComponent(email)}`, { credentials: 'include' })
-    ]);
 
-    const sentData = await sentRes.json();
-    const customerData = await customerRes.json();
+  // เปิด modal แก้ไขลูกค้า
+  function openEditCustomerModal() {
+    document.getElementById("editCustomerModal").classList.remove("hidden");
+    document.getElementById("customerSearchInput").value = "";
+    document.getElementById("customer-list").classList.remove("hidden");
+    document.getElementById("customer-pagination").classList.remove("hidden");
+    document.getElementById("editCustomerFormContainer").classList.add("hidden");
 
-    document.getElementById("my-email-sent").textContent = sentData.count || 0;
-    document.getElementById("my-customer-count").textContent = customerData.count || 0;
-  } catch (error) {
-    console.error("📉 โหลดข้อมูลเมลล้มเหลว:", error);
+    loadCustomers();
+  }
+  // ปิด modal แก้ไขลูกค้า
+  function closeEditModal() {
+    document.getElementById("editCustomerModal").classList.add("hidden");
+    closeEditForm();
+  }
+  // ปิดฟอร์มแก้ไขและล้างข้อมูล
+function closeEditForm() {
+  const form = document.getElementById("editCustomerForm");
+  form.reset();
+  form.removeAttribute("data-customer-id");
+  document.getElementById("editCustomerFormContainer").classList.add("hidden");
+  document.getElementById("customer-list").classList.remove("hidden");
+  document.getElementById("customer-pagination").classList.remove("hidden");
+}
+
+// ปิด modal แก้ไขลูกค้า และปิดฟอร์มแก้ไขในตัว
+function closeEditModal() {
+  document.getElementById("editCustomerModal").classList.add("hidden");
+  closeEditForm();
+}
+// เปิด modal เชื่อมต่อ
+function openConnectModal() {
+  document.getElementById("connectModal").classList.remove("hidden");
+}
+
+// ปิด modal เชื่อมต่อ
+function closeConnectModal() {
+  document.getElementById("connectModal").classList.add("hidden");
+}
+function togglePassword() {
+  const passwordInput = document.getElementById("password");
+  const eyeIcon = document.getElementById("eyeIcon");
+
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    // เปลี่ยน icon เป็นปิดตา
+    eyeIcon.innerHTML = `
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.969 
+           9.969 0 012.021-3.364M6.1 6.1a9.953 9.953 0 013.9-1.1c4.478 
+           0 8.268 2.943 9.542 7a9.96 9.96 0 01-4.132 5.13M3 3l18 18" />
+    `;
+  } else {
+    passwordInput.type = "password";
+    // เปลี่ยน icon เป็นรูปตา
+    eyeIcon.innerHTML = `
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 
+           0 8.268 2.943 9.542 7-1.274 4.057-5.064 
+           7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+    `;
   }
 }
 
 </script>
 
-</main>
       </div>
       <script>
         const observer = new MutationObserver(() => {

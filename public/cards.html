@@ -616,229 +616,422 @@
           </div>
         </header>
         <main class="h-full pb-16 overflow-y-auto">
-          <div class="container px-6 mx-auto grid">
-            <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-              เพิ่มข้อมูลลูกค้า
-            </h2>
-            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-8 rounded-lg shadow-lg w-full max-w-3xl mx-auto mt-10">
-              <h2 class="text-3xl font-semibold text-center text-purple-600 mb-6">ฟอร์มกรอกข้อมูลลูกค้า</h2>
-        
-              <form id="customerForm" action="/add-customer" method="POST">
-                <!-- อีเมลลูกค้า -->
-                <div class="mb-6">
-                  <label for="email" class="block text-lg font-medium text-gray-700 dark:text-gray-300">ชื่อE-mailลูกค้า</label>
-                  <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    class="mt-1 block w-full px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent dark:bg-gray-700 dark:text-white" 
-                    placeholder="กรุณากรอกอีเมล" 
-                    required
-                  >
-                </div>
-                <!-- ชื่อบริษัทลูกค้า -->
-                <div class="mb-6">
-                  <label for="company_name" class="block text-lg font-medium text-gray-700 dark:text-gray-300">ชื่อบริษัทลูกค้า</label>
-                  <input 
-                    type="text" 
-                    id="company_name" 
-                    name="company_name" 
-                    class="mt-1 block w-full px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent dark:bg-gray-700 dark:text-white" 
-                    placeholder="กรุณากรอกชื่อบริษัทลูกค้า" 
-                    required
-                  >
-                </div>
-        
-                <!-- จังหวัด -->
-                <div class="mb-6">
-                  <label for="province" class="block text-lg font-medium text-gray-700 dark:text-gray-300">จังหวัด</label>
-                  <select 
-                    id="province" 
-                    name="province" 
-                    class="mt-1 block w-full px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent dark:bg-gray-700 dark:text-white" 
-                    onchange="loadAmphures()" 
-                    required
-                  >
-                    <option value="">กรุณาเลือกจังหวัด</option>
-                    <!-- ตัวเลือกจังหวัดจะถูกโหลดจาก API -->
-                  </select>
-                </div>
-        
-                <!-- อำเภอ -->
-                <div class="mb-6">
-                  <label for="district" class="block text-lg font-medium text-gray-700 dark:text-gray-300">อำเภอ</label>
-                  <select 
-                    id="district" 
-                    name="district" 
-                    class="mt-1 block w-full px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent dark:bg-gray-700 dark:text-white" 
-                    required
-                  >
-                    <option value="">กรุณาเลือกอำเภอ</option>
-                  </select>
-                </div>
-        
-                <!-- ปุ่มส่งข้อมูล -->
-                <div class="flex justify-center">
-                  <button type="submit" id="submitButton" class="w-full px-6 py-3 text-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
-                    ส่งข้อมูล
-                  </button>
-                </div>
-              </form>
-        
+   <div class="container px-6 mx-auto grid">
+  <h2 class="my-6 text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
+    เพิ่มข้อมูลลูกค้า
+  </h2>
+ <!-- Note -->
+   <!-- ปุ่มเปิด Modal -->
+<div class="text-center mb-6">
+  <button
+    onclick="openHelpModal()"
+    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+    type="button"
+  >
+    ℹ️ วิธีใช้งาน
+  </button>
+</div>
+
+<!-- Modal -->
+<div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white dark:bg-gray-800 rounded-lg max-w-lg w-full p-6 relative shadow-lg overflow-y-auto max-h-[80vh]">
+    <h3 class="text-xl font-semibold mb-4 text-blue-700">วิธีใช้งาน</h3>
+    <ul class="list-disc list-inside text-sm leading-relaxed mb-4 text-gray-900 dark:text-gray-100">
+      <li>เลือกวิธีเพิ่มข้อมูลลูกค้า โดยกดปุ่ม <strong>➕ กรอกฟอร์ม</strong> เพื่อกรอกข้อมูลทีละรายการ</li>
+      <li>หรือกด <strong>📁 อัปโหลด Excel</strong> เพื่อเพิ่มข้อมูลลูกค้าจำนวนมากจากไฟล์ Excel (.xlsx)</li>
+      <li>ไฟล์ Excel ต้องมีคอลัมน์ <code>email</code>, <code>company_name</code>, <code>province</code>, และ <code>district</code> (ชื่อคอลัมน์ต้องตรงกัน)</li>
+      <!-- ปุ่มเล็กสำหรับเปิดดูตัวอย่าง Excel -->
+<div class="mb-4 text-center">
+  <button
+    type="button"
+    onclick="toggleExample()"
+    class="text-sm text-blue-600 hover:underline focus:outline-none"
+  >
+    ดูตัวอย่างไฟล์ Excel
+  </button>
+</div>
+
+<!-- ตัวอย่าง Excel ซ่อนอยู่ -->
+<div
+  id="excelExample"
+  class="hidden bg-gray-50 dark:bg-gray-900 p-4 rounded border border-gray-300 dark:border-gray-600 max-w-xl mx-auto"
+>
+  <p class="font-semibold mb-2 text-center text-gray-700 dark:text-gray-300">ตัวอย่าง Excel ที่ถูกต้อง</p>
+  <img
+    src="./assets/img/excel.png"
+    alt="ตัวอย่างไฟล์ Excel"
+    class="mx-auto rounded border border-gray-300 dark:border-gray-600"
+    style="max-width: 100%; height: auto;"
+  />
+</div>
+
+      <li>กรณีกรอกฟอร์มเอง ต้องกรอกอีเมล, ชื่อบริษัท, จังหวัด, และอำเภอให้ครบถ้วน</li>
+      <li>เมื่อกรอกข้อมูลหรืออัปโหลดไฟล์เรียบร้อย ให้กดปุ่มส่งข้อมูลเพื่อบันทึก</li>
+      <li>หากพบปัญหา เช่น อีเมลซ้ำ ระบบจะแจ้งเตือนและระบุข้อมูลที่ซ้ำ</li>
+    </ul>
+    <button
+      onclick="closeHelpModal()"
+      class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 dark:hover:text-gray-300"
+      aria-label="Close"
+      title="ปิด"
+    >
+      ❌
+    </button>
+  </div>
+</div>
+
+  <!-- 🔘 ปุ่มให้เลือกว่าจะเพิ่มแบบไหน -->
+  <div id="selectMode" class="flex justify-center mb-8 space-x-4">
+    <button
+      onclick="showForm('manual')"
+      class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+      type="button"
+    >
+      ➕ กรอกฟอร์ม
+    </button>
+    <button
+      onclick="showForm('excel')"
+      class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+      type="button"
+    >
+      📁 อัปโหลด Excel
+    </button>
+  </div>
+
+  <!-- ✅ ฟอร์มกรอกข้อมูล -->
+  <div id="manualForm" class="hidden bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-8 rounded-lg shadow-lg w-full max-w-3xl mx-auto">
+    <h3 class="text-2xl font-semibold text-center text-purple-600 mb-6">ฟอร์มกรอกข้อมูลลูกค้า</h3>
+    <form id="customerForm" action="/add-customer" method="POST">
+      <!-- Email -->
+      <div class="mb-6">
+        <label for="email" class="block text-lg font-medium">อีเมลลูกค้า</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          class="mt-1 block w-full px-6 py-3 border rounded-lg dark:bg-gray-700" 
+          placeholder="กรอกอีเมลลูกค้า" 
+          required 
+        />
+      </div>
+
+      <!-- Company -->
+      <div class="mb-6">
+        <label for="company_name" class="block text-lg font-medium">ชื่อบริษัทลูกค้า</label>
+        <input 
+          type="text" 
+          id="company_name" 
+          name="company_name" 
+          class="mt-1 block w-full px-6 py-3 border rounded-lg dark:bg-gray-700" 
+          placeholder="กรอกชื่อบริษัท" 
+          required 
+        />
+      </div>
+
+      <!-- Province -->
+      <div class="mb-6">
+        <label for="province" class="block text-lg font-medium">จังหวัด</label>
+        <select 
+          id="province" 
+          name="province" 
+          onchange="loadAmphures()" 
+          class="mt-1 block w-full px-6 py-3 border rounded-lg dark:bg-gray-700" 
+          required
+        >
+          <option value="">เลือกจังหวัด</option>
+        </select>
+      </div>
+
+      <!-- District -->
+      <div class="mb-6">
+        <label for="district" class="block text-lg font-medium">อำเภอ</label>
+        <select 
+          id="district" 
+          name="district" 
+          class="mt-1 block w-full px-6 py-3 border rounded-lg dark:bg-gray-700" 
+          required
+        >
+          <option value="">เลือกอำเภอ</option>
+        </select>
+      </div>
+
+      <!-- Submit + กลับ -->
+      <div class="flex justify-between items-center mt-6">
+        <button 
+          type="button"
+          onclick="backToSelect()"
+          class="text-sm text-gray-500 hover:underline font-semibold text-gray-800 dark:text-gray-100"
+        >
+          ⬅️ ย้อนกลับ
+        </button>
+        <button 
+          type="submit" 
+          class="px-6 py-3 bg-purple-600 text-white text-lg font-semibold rounded-lg hover:bg-purple-700"
+        >
+          ✅ ส่งข้อมูล
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ✅ ฟอร์มอัปโหลด Excel -->
+  <div id="excelForm" class="hidden bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-8 mt-6 rounded-lg shadow-lg w-full max-w-2xl mx-auto">
+    <h3 class="text-2xl font-semibold text-center text-green-600 mb-6">อัปโหลดข้อมูลลูกค้าจาก Excel</h3>
+    <form id="uploadExcelForm" enctype="multipart/form-data" method="POST" action="/api/customers/upload-excel">
+      <input 
+        type="file" 
+        name="file" 
+        accept=".xlsx" 
+        class="mb-6 w-full px-4 py-2 border rounded-lg dark:bg-gray-700"
+        required
+      />
+      <div class="flex justify-between items-center">
+        <button 
+          type="button"
+          onclick="backToSelect()"
+          class="text-sm text-gray-500 hover:underline font-semibold text-gray-800 dark:text-gray-100"
+        >
+          ⬅️ ย้อนกลับ
+        </button>
+        <button 
+          type="submit" 
+          class="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700"
+        >
+          📤 อัปโหลด
+        </button>
+      </div>
+    </form>
+  </div>
+ <!-- ✅ Loading Modal -->
+<div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-40 z-50 hidden flex items-center justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+    <svg class="animate-spin h-8 w-8 text-blue-600 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor"
+        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <p class="text-gray-800 font-semibold">กำลังอัปโหลดข้อมูลจาก Excel...</p>
+  </div>
+</div>
+</div>
               <script>
-                // ตรวจสอบอีเมล
-                async function checkEmail() {
-  const email = document.getElementById("email").value;
-  
-  try {
-    const response = await fetch(`http://localhost:5000/check-email?email=${email}`);
-    const data = await response.json();
+  // สลับแสดงฟอร์ม
+  function showForm(type) {
+    document.getElementById("selectMode").classList.add("hidden");
+    document.getElementById("manualForm").classList.add("hidden");
+    document.getElementById("excelForm").classList.add("hidden");
 
-    if (response.ok) {
-      // หากข้อมูลอีเมลถูกต้อง
-      document.getElementById("emailError").classList.add("hidden");
-    } else if (response.status === 400) {
-      // หากเกิดข้อผิดพลาดจากเซิร์ฟเวอร์ เช่น อีเมลซ้ำ
-      document.getElementById("emailError").classList.remove("hidden");
-      document.getElementById("emailError").innerText =
-        `${data.message} เพิ่มเมื่อวันที่ ${data.addedAt !== "ไม่มีข้อมูลวันที่" 
-          ? new Date(data.addedAt).toLocaleDateString("th-TH") 
-          : "ไม่ระบุ"}`;
-    } else {
-      // กรณีข้อผิดพลาดที่ไม่คาดคิด
-      throw new Error("Unexpected error from server.");
+    if (type === "manual") {
+      document.getElementById("manualForm").classList.remove("hidden");
+    } else if (type === "excel") {
+      document.getElementById("excelForm").classList.remove("hidden");
     }
-  } catch (err) {
-    console.error("Error checking email:", err);
-    document.getElementById("emailError").classList.remove("hidden");
-    document.getElementById("emailError").innerText = "เกิดข้อผิดพลาด";
   }
-}
 
-document.getElementById("email").addEventListener("blur", checkEmail);
+  function backToSelect() {
+    document.getElementById("selectMode").classList.remove("hidden");
+    document.getElementById("manualForm").classList.add("hidden");
+    document.getElementById("excelForm").classList.add("hidden");
+  }
 
-// ส่งข้อมูล
-async function submitCustomerForm(e) {
-  e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = {};
-      formData.forEach((value, key) => (data[key] = value));
+  // ตรวจสอบอีเมล
+  async function checkEmail() {
+    const email = document.getElementById("email").value;
 
-      try {
-        // เรียกใช้ fetch สำหรับการส่งข้อมูล
-        const response = await fetch('http://localhost:5000/api/customers/add-customer', {
-  method: "POST",
-  credentials: "include",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-  email: data.email,
-  company_name: data.company_name,
-  province: data.province,
-  district: data.district
-})
-});
+    try {
+      const response = await fetch(`http://localhost:5000/check-email?email=${encodeURIComponent(email)}`);
+      const data = await response.json();
 
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-          // ถ้าผลลัพธ์จากเซิร์ฟเวอร์บอกว่าประสบความสำเร็จ
-          alert("✅ เพิ่มข้อมูลลูกค้าสำเร็จ!");
-          e.target.reset();
-        } else {
-          // ถ้าเกิดข้อผิดพลาด
-          console.log("⚠️ Server Message:", result.message);
-          const regex = /อีเมลนี้ถูกใช้งานแล้วโดย (.*?) เมื่อ (.*)/;
-          const match = result.message.match(regex);
-          if (match) {
-            alert(`❌ อีเมลนี้ซ้ำกับของ ${match[1].trim()} ซึ่งถูกเพิ่มเมื่อวันที่ ${match[2].trim()}`);
-          } else {
-            alert(result.message);
-          }
-        }
-      } catch (error) {
-        console.error("❌ Error adding customer:", error);
-        alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์กรุณาตรวจสอบการล็อคอิน");
+      if (response.ok) {
+        document.getElementById("emailError").classList.add("hidden");
+      } else if (response.status === 400) {
+        document.getElementById("emailError").classList.remove("hidden");
+        document.getElementById("emailError").innerText =
+          `${data.message} เพิ่มเมื่อวันที่ ${data.addedAt !== "ไม่มีข้อมูลวันที่" 
+            ? new Date(data.addedAt).toLocaleDateString("th-TH") 
+            : "ไม่ระบุ"}`;
+      } else {
+        throw new Error("Unexpected error from server.");
       }
+    } catch (err) {
+      console.error("Error checking email:", err);
+      document.getElementById("emailError").classList.remove("hidden");
+      document.getElementById("emailError").innerText = "เกิดข้อผิดพลาด";
+    }
+  }
+
+  document.getElementById("email").addEventListener("blur", checkEmail);
+
+  // ส่งข้อมูลฟอร์มกรอกเอง
+  async function submitCustomerForm(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = {};
+    formData.forEach((value, key) => (data[key] = value));
+
+    try {
+      const response = await fetch("http://localhost:5000/api/customers/add-customer", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.email,
+          company_name: data.company_name,
+          province: data.province,
+          district: data.district,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert("✅ เพิ่มข้อมูลลูกค้าสำเร็จ!");
+        e.target.reset();
+      } else {
+        console.log("⚠️ Server Message:", result.message);
+        const regex = /อีเมลนี้ถูกใช้งานแล้วโดย (.*?) เมื่อ (.*)/;
+        const match = result.message.match(regex);
+        if (match) {
+          alert(`❌ อีเมลนี้ซ้ำกับของ ${match[1].trim()} ซึ่งถูกเพิ่มเมื่อวันที่ ${match[2].trim()}`);
+        } else {
+          alert(result.message);
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error adding customer:", error);
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์ กรุณาตรวจสอบการล็อกอิน");
+    }
+  }
+
+  document.getElementById("customerForm").addEventListener("submit", submitCustomerForm);
+
+  // โหลดข้อมูลจังหวัดและอำเภอ
+  let rawData = null;
+  async function loadDatabase() {
+    try {
+      const response = await fetch("./raw_database.json");
+      if (!response.ok) throw new Error("โหลดข้อมูลล้มเหลว");
+      const data = await response.json();
+
+      if (Array.isArray(data) && data.length > 0) {
+        rawData = data; // เก็บไว้ใช้ภายหลัง
+        processDatabase(data);
+      } else {
+        console.error("❌ ข้อมูลฐานข้อมูลไม่ถูกต้อง:", data);
+      }
+    } catch (error) {
+      console.error("❌ เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
+    }
+  }
+
+  function processDatabase(data) {
+    const provinceSelect = document.getElementById("province");
+    provinceSelect.innerHTML = '<option value="">กรุณาเลือกจังหวัด</option>';
+    const provinces = [...new Set(data.map((item) => item.province))];
+
+    if (provinces.length === 0) {
+      console.error("❌ ไม่มีข้อมูลจังหวัดในฐานข้อมูล");
+      return;
     }
 
-document.getElementById("customerForm").addEventListener("submit", submitCustomerForm);
+    provinces.forEach((province) => {
+      const option = document.createElement("option");
+      option.value = province;
+      option.textContent = province;
+      provinceSelect.appendChild(option);
+    });
 
-              
-              
-                // โหลดข้อมูลจังหวัดและอำเภอ
-                async function loadDatabase() {
-                  try {
-                    const response = await fetch("./raw_database.json");
-                    if (!response.ok) throw new Error("โหลดข้อมูลล้มเหลว");
-                    const data = await response.json();
-                    
-                    // ตรวจสอบว่า data ที่ได้เป็น array ที่ไม่ว่าง
-                    if (Array.isArray(data) && data.length > 0) {
-                      processDatabase(data);
-                    } else {
-                      console.error("❌ ข้อมูลฐานข้อมูลไม่ถูกต้อง:", data);
-                    }
-                  } catch (error) {
-                    console.error("❌ เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
-                  }
-                }
-              
-                function processDatabase(data) {
-                  const provinceSelect = document.getElementById("province");
-                  provinceSelect.innerHTML = '<option value="">กรุณาเลือกจังหวัด</option>';
-                  const provinces = [...new Set(data.map((item) => item.province))];
-                  
-                  // ตรวจสอบว่ามีจังหวัดใน data หรือไม่
-                  if (provinces.length === 0) {
-                    console.error("❌ ไม่มีข้อมูลจังหวัดในฐานข้อมูล");
-                  } else {
-                    provinces.forEach((province) => {
-                      const option = document.createElement("option");
-                      option.value = province;
-                      option.textContent = province;
-                      provinceSelect.appendChild(option);
-                    });
-                    provinceSelect.addEventListener("change", () => loadAmphures(data));
-                  }
-                }
-              
-                function loadAmphures(data) {
-                  const province = document.getElementById("province").value;
-                  const amphureSelect = document.getElementById("district");
-                  amphureSelect.innerHTML = '<option value="">กรุณาเลือกอำเภอ</option>';
-              
-                  if (!province) {
-                    console.error("❌ ข้อมูลจังหวัดไม่ถูกต้อง:", province);
-                    return;
-                  }
-              
-                  // ตรวจสอบข้อมูล data ก่อนที่จะทำการกรอง
-                  if (data && Array.isArray(data)) {
-                    const amphures = [...new Set(data.filter((item) => item.province === province).map((item) => item.amphoe))];
-              
-                    // หากไม่มีข้อมูลอำเภอให้แสดงข้อความ
-                    if (amphures.length === 0) {
-                      console.error("❌ ไม่มีอำเภอในจังหวัดนี้:", province);
-                    } else {
-                      amphures.forEach((amphure) => {
-                        const option = document.createElement("option");
-                        option.value = amphure;
-                        option.textContent = amphure;
-                        amphureSelect.appendChild(option);
-                      });
-                    }
-                  } else {
-                    console.error("❌ ข้อมูลฐานข้อมูลไม่ถูกต้อง:", data);
-                  }
-                }
-              
-                window.onload = loadDatabase;
-              </script>
-                   
-            </div>
-          </div>
+    provinceSelect.addEventListener("change", () => loadAmphures());
+  }
+
+  function loadAmphures() {
+    const province = document.getElementById("province").value;
+    const amphureSelect = document.getElementById("district");
+    amphureSelect.innerHTML = '<option value="">กรุณาเลือกอำเภอ</option>';
+
+    if (!province) {
+      return;
+    }
+
+    if (rawData && Array.isArray(rawData)) {
+      const amphures = [...new Set(rawData.filter((item) => item.province === province).map((item) => item.amphoe))];
+
+      if (amphures.length === 0) {
+        console.error("❌ ไม่มีอำเภอในจังหวัดนี้:", province);
+      } else {
+        amphures.forEach((amphure) => {
+          const option = document.createElement("option");
+          option.value = amphure;
+          option.textContent = amphure;
+          amphureSelect.appendChild(option);
+        });
+      }
+    } else {
+      console.error("❌ ข้อมูลฐานข้อมูลไม่ถูกต้อง");
+    }
+  }
+
+  window.onload = loadDatabase;
+
+  // อัปโหลด Excel พร้อม spinner loading
+  const uploadExcelForm = document.getElementById("uploadExcelForm");
+  const loadingOverlay = document.getElementById("loadingOverlay");
+
+  uploadExcelForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const submitBtn = uploadExcelForm.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    loadingOverlay.classList.remove("hidden");
+
+    const formData = new FormData(uploadExcelForm);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/customers/upload-excel", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert(`✅ อัปโหลดสำเร็จ: ${result.message}`);
+        uploadExcelForm.reset();
+      } else {
+        alert(`❌ ไม่สำเร็จ: ${result.message || "ไม่สามารถอัปโหลดได้"}`);
+      }
+    } catch (err) {
+      console.error("Upload Error:", err);
+      alert("❌ เกิดข้อผิดพลาดในการอัปโหลดไฟล์");
+    } finally {
+      loadingOverlay.classList.add("hidden");
+      submitBtn.disabled = false;
+    }
+  });
+   function openHelpModal() {
+    document.getElementById('helpModal').classList.remove('hidden');
+  }
+  function closeHelpModal() {
+    document.getElementById('helpModal').classList.add('hidden');
+  }
+
+  // กดนอกกล่องก็ปิด modal ได้ (ถ้าต้องการ)
+  document.getElementById('helpModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeHelpModal();
+    }
+  });
+   function toggleExample() {
+    const exampleDiv = document.getElementById('excelExample');
+    if (exampleDiv.classList.contains('hidden')) {
+      exampleDiv.classList.remove('hidden');
+    } else {
+      exampleDiv.classList.add('hidden');
+    }
+  }
+</script>
+
         </main>
  <script>
                 const observer = new MutationObserver(() => {
