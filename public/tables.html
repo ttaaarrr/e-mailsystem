@@ -628,7 +628,7 @@
             </ul>
           </div>
         </header>
-        <main class="h-full pb-16 overflow-y-auto">
+           <main class="h-full pb-16 overflow-y-auto">
           <div class="container grid px-6 mx-auto">
             <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
               ข้อมูลลูกค้า
@@ -700,13 +700,12 @@
                 <table class="w-full whitespace-no-wrap" id="customers-table">
                   <thead>
                     <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                      <th class="px-4 py-3">ชื่อบริษัท</th>
-                      <th class="px-4 py-3">อีเมล</th>
-                      <th class="px-4 py-3">เพิ่มโดย</th>
-                      <th class="px-4 py-3">ฝ่าย</th>
-                      <th class="px-4 py-3">สาขา</th>
-                      <th class="px-4 py-3">วันที่ลงข้อมูลในระบบ</th>
-                      <!-- <th class="px-4 py-3 w-20 text-center">ลบรายชื่อลูกค้า</th> -->
+                        <th class="px-4 py-3 cursor-pointer" data-sort="company_name">ชื่อบริษัท ⬍</th>
+                        <th class="px-4 py-3">อีเมล</th>
+                        <th class="px-4 py-3">เพิ่มโดย</th>
+                        <th class="px-4 py-3">ฝ่าย</th>
+                        <th class="px-4 py-3">สาขา</th>
+                        <th class="px-4 py-3 cursor-pointer" data-sort="created_at">วันที่ลงข้อมูลในระบบ ⬍</th>
                     </tr>
                   </thead>
                   <tbody id="customerTableBody" class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
@@ -718,11 +717,20 @@
             <p id="summary" class="mb-4 text-md text-gray-700 dark:text-gray-300">
               รวมลูกค้า: 0 ราย
             </p>
+            <div class="flex justify-between items-center mt-4">
+  <button id="prevPageBtn" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">ก่อนหน้า</button>
+  <span id="pageInfo" class="text-gray-700 dark:text-gray-300">หน้า 1/1</span>
+  <button id="nextPageBtn" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">ถัดไป</button>
+</div>
+
           </div>
          <script>
   let allCustomers = [];
   let allUsers = [];
-
+  let currentPage = 1;
+  let sortField = null;
+  let sortDirection = 'asc'; 
+  const rowsPerPage = 10;
   // ประกาศตัวแปร element ที่ใช้
   let ownerSelect, departmentSelect, branchSelect;
 
@@ -950,55 +958,106 @@ function updateDepartmentBranchByOwner() {
 
     let filtered = allCustomers;
 
-    if (owner) {
-      filtered = filtered.filter(c => c.owner_full_name === owner);
-    }
+    if (owner) filtered = filtered.filter(c => c.owner_full_name === owner);
+    if (department) filtered = filtered.filter(c => c.owner_department === department);
+    if (branch) filtered = filtered.filter(c => c.owner_branch === branch);
+    if (month) filtered = filtered.filter(c => (new Date(c.created_at).getMonth() + 1) === parseInt(month));
+    if (year) filtered = filtered.filter(c => new Date(c.created_at).getFullYear() === parseInt(year));
 
-    if (department) {
-      filtered = filtered.filter(c => c.owner_department === department);
-    }
-
-    if (branch) {
-      filtered = filtered.filter(c => c.owner_branch === branch);
-    }
-
-    if (month) {
-      filtered = filtered.filter(c => (new Date(c.created_at).getMonth() + 1) === parseInt(month));
-    }
-
-    if (year) {
-      filtered = filtered.filter(c => new Date(c.created_at).getFullYear() === parseInt(year));
-    }
-
+    currentPage = 1; // ✅ กลับไปหน้าแรกเสมอเมื่อกรอง
     displayCustomers(filtered);
   }
+// ฟังก์ชันจัดเรียงข้อมูล
+function sortCustomers(customers) {
+  if (!sortField) return customers;
+  return [...customers].sort((a, b) => {
+    let valA = a[sortField];
+    let valB = b[sortField];
 
-  function displayCustomers(customers) {
-    const tableBody = document.getElementById("customerTableBody");
-    tableBody.innerHTML = "";
-    customers.forEach(customer => {
-      const owner = customer.owner_full_name || "ไม่พบข้อมูล";
-      const row = document.createElement("tr");
-      row.classList.add("text-gray-700", "dark:text-gray-400");
-      row.innerHTML = `
-        <td class="px-4 py-3">${customer.company_name}</td>
-        <td class="px-4 py-3">${customer.email}</td>
-        <td class="px-4 py-3">${owner}</td>
-        <td class="px-4 py-3">${customer.owner_department || "ไม่พบข้อมูลฝ่าย"}</td>
-        <td class="px-4 py-3">${customer.owner_branch || "ไม่พบข้อมูลสาขา"}</td>
-        <td class="px-4 py-3">${new Date(customer.created_at).toLocaleDateString()}</td>
-      `;
-      //ปุ่มลบ
-  //      <button onclick="deleteCustomer(${customer.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">
-  //     ลบ
-  //   </button>
-  // </td>
-      tableBody.appendChild(row);
+    // ถ้าเป็นวันที่ แปลงเป็นเวลา
+    if (sortField === 'created_at') {
+      valA = new Date(valA).getTime();
+      valB = new Date(valB).getTime();
+    } else {
+      // แปลงเป็น string เพื่อเปรียบเทียบไม่สนตัวพิมพ์เล็กใหญ่
+      valA = valA ? valA.toString().toLowerCase() : '';
+      valB = valB ? valB.toString().toLowerCase() : '';
+    }
+
+    if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+    if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
+}
+
+// Event Listener คลิกหัวตาราง
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("th[data-sort]").forEach(th => {
+    th.addEventListener("click", () => {
+      const field = th.getAttribute("data-sort");
+      if (sortField === field) {
+        // ถ้าคลิกซ้ำ ให้สลับ asc/desc
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortField = field;
+        sortDirection = 'asc';
+      }
+      displayCustomers(window.filteredCustomers || allCustomers);
     });
+  });
+});
 
-    document.getElementById("summary").textContent = `รวมลูกค้า: ${customers.length} ราย`;
-  }
-  async function deleteCustomer(id) {
+function displayCustomers(customers) {
+  const tableBody = document.getElementById("customerTableBody");
+  tableBody.innerHTML = "";
+
+  // ✅ เรียงก่อนตัดหน้า
+  const sortedCustomers = sortCustomers(customers);
+
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const customersToShow = sortedCustomers.slice(startIndex, endIndex);
+
+  customersToShow.forEach(customer => {
+    const owner = customer.owner_full_name || "ไม่พบข้อมูล";
+    const row = document.createElement("tr");
+    row.classList.add("text-gray-700", "dark:text-gray-400");
+    row.innerHTML = `
+      <td class="px-4 py-3">${customer.company_name}</td>
+      <td class="px-4 py-3">${customer.email}</td>
+      <td class="px-4 py-3">${owner}</td>
+      <td class="px-4 py-3">${customer.owner_department || "ไม่พบข้อมูลฝ่าย"}</td>
+      <td class="px-4 py-3">${customer.owner_branch || "ไม่พบข้อมูลสาขา"}</td>
+      <td class="px-4 py-3">${new Date(customer.created_at).toLocaleDateString()}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+
+  document.getElementById("summary").textContent = `รวมลูกค้า: ${customers.length} ราย`;
+
+  const totalPages = Math.ceil(customers.length / rowsPerPage) || 1;
+  document.getElementById("pageInfo").textContent = `หน้า ${currentPage}/${totalPages}`;
+  document.getElementById("prevPageBtn").disabled = currentPage === 1;
+  document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
+
+  window.filteredCustomers = customers;
+}
+
+  // ✅ ปุ่มเลื่อนหน้า
+  document.getElementById("prevPageBtn").addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      displayCustomers(window.filteredCustomers);
+    }
+  });
+
+  document.getElementById("nextPageBtn").addEventListener("click", () => {
+    const totalPages = Math.ceil(window.filteredCustomers.length / rowsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      displayCustomers(window.filteredCustomers);
+    }
+  });async function deleteCustomer(id) {
   if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบลูกค้ารายนี้?")) return;
 
   try {
